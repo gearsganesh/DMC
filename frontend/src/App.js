@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import "./App.css";
+import { supabase } from "./lib/supabaseClient";
 
 const internetImages = [
   "https://images.unsplash.com/photo-1617400275654-11aa6dbe72d8?auto=format&fit=crop&w=1200&q=85",
@@ -85,7 +86,7 @@ const VANTA_SRC = "https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.waves.mi
 
 function loadBackgroundScript(src, attribute) {
   return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[data-${attribute}="true"]`);
+    const existing = document.querySelector(`script[data-${attribute}=\"true\"]`);
     if (existing) {
       if (existing.dataset.loaded === "true") { resolve(); return; }
       existing.addEventListener("load", resolve, { once: true });
@@ -187,39 +188,12 @@ function Header({ menuOpen, setMenuOpen }) {
           </a>
         ))}
       </nav>
-      <button
-        type="button"
-        className="menu-trigger"
-        onClick={() => setMenuOpen(true)}
-        aria-label="Open navigation menu"
-        data-testid="mobile-menu-open-button"
-      >
-        <Menu size={20} strokeWidth={1.5} />
-        <span>Menu</span>
-      </button>
+      <button type="button" className="menu-trigger" onClick={() => setMenuOpen(true)} aria-label="Open navigation menu" data-testid="mobile-menu-open-button"><Menu size={20} strokeWidth={1.5} /><span>Menu</span></button>
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            className="mobile-menu"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            data-testid="mobile-menu"
-          >
-            <div className="mobile-menu-top">
-              <span data-testid="mobile-menu-label">Navigation</span>
-              <button type="button" onClick={() => setMenuOpen(false)} aria-label="Close navigation menu" data-testid="mobile-menu-close-button">
-                <X size={22} strokeWidth={1.5} />
-              </button>
-            </div>
-            <nav aria-label="Mobile navigation">
-              {navItems.map((item) => (
-                <a href={item.href} key={item.href} onClick={() => setMenuOpen(false)} data-testid={`mobile-nav-${item.label.replace(" ", "-")}`}>
-                  {item.label}
-                  <ArrowDownRight size={20} strokeWidth={1.3} />
-                </a>
-              ))}
-            </nav>
+          <motion.div className="mobile-menu" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} data-testid="mobile-menu">
+            <div className="mobile-menu-top"><span data-testid="mobile-menu-label">Navigation</span><button type="button" onClick={() => setMenuOpen(false)} aria-label="Close navigation menu" data-testid="mobile-menu-close-button"><X size={22} strokeWidth={1.5} /></button></div>
+            <nav aria-label="Mobile navigation">{navItems.map((item) => <a href={item.href} key={item.href} onClick={() => setMenuOpen(false)} data-testid={`mobile-nav-${item.label.replace(" ", "-")}`}>{item.label}<ArrowDownRight size={20} strokeWidth={1.3} /></a>)}</nav>
           </motion.div>
         )}
       </AnimatePresence>
@@ -230,26 +204,13 @@ function Header({ menuOpen, setMenuOpen }) {
 function Hero() {
   return (
     <section className="hero" id="top" data-testid="hero-section">
-      <div className="hero-shade" aria-hidden="true" />
-      <div className="hero-grid" aria-hidden="true" />
+      <div className="hero-shade" aria-hidden="true" /><div className="hero-grid" aria-hidden="true" />
       <div className="hero-content">
-        <motion.p className="eyebrow hero-eyebrow" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} data-testid="hero-eyebrow">
-          Duraimohan Classics / Est. 1996
-        </motion.p>
-        <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.42, duration: 0.8 }} data-testid="hero-heading">
-          Where <span>Automotive</span>
-          <br />
-          <em>History Lives.</em>
-        </motion.h1>
-        <motion.div className="hero-bottom" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.85 }}>
-          <p data-testid="hero-description">Duraimohan Classics is the story of a lifelong passion for machines. What began with the curiosity of a young enthusiast working on, modifying and giving his own character to cars grew into a deeper pursuit: finding forgotten automobiles, rescuing them from neglect, restoring their mechanical soul and putting them back on the road. Today, each machine in the DMC collection represents more than an era of motoring. It represents a piece of a journey lived through the hands, sounds and movement of the automobile.</p>
-          <a href="#archive" className="circle-link" data-testid="hero-archive-link" aria-label="Explore the archive">
-            <ArrowDownRight size={24} strokeWidth={1.2} />
-          </a>
-        </motion.div>
+        <motion.p className="eyebrow hero-eyebrow" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} data-testid="hero-eyebrow">Duraimohan Classics / Est. 1996</motion.p>
+        <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.42, duration: 0.8 }} data-testid="hero-heading">Where <span>Automotive</span><br /><em>History Lives.</em></motion.h1>
+        <motion.div className="hero-bottom" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.85 }}><p data-testid="hero-description">Duraimohan Classics is the story of a lifelong passion for machines. What began with the curiosity of a young enthusiast working on, modifying and giving his own character to cars grew into a deeper pursuit: finding forgotten automobiles, rescuing them from neglect, restoring their mechanical soul and putting them back on the road. Today, each machine in the DMC collection represents more than an era of motoring. It represents a piece of a journey lived through the hands, sounds and movement of the automobile.</p><a href="#archive" className="circle-link" data-testid="hero-archive-link" aria-label="Explore the archive"><ArrowDownRight size={24} strokeWidth={1.2} /></a></motion.div>
       </div>
-      <div className="hero-index" data-testid="hero-index">01 <span>/</span> 25</div>
-      <div className="hero-caption" data-testid="hero-caption">A living archive<br />of automotive heritage</div>
+      <div className="hero-index" data-testid="hero-index">01 <span>/</span> 25</div><div className="hero-caption" data-testid="hero-caption">A living archive<br />of automotive heritage</div>
     </section>
   );
 }
@@ -257,282 +218,68 @@ function Hero() {
 function IntroSection() {
   return (
     <section className="intro-section page-shell" id="story" data-testid="story-section">
-      <div className="section-kicker" data-testid="story-kicker"><span>02</span><span>Point of view</span></div>
-      <div className="intro-copy">
-        <p className="eyebrow" data-testid="story-eyebrow">Preserved to be driven.</p>
-        <h2 data-testid="story-heading">History should not be locked away. It should be <em>kept alive.</em></h2>
-      </div>
-      <div className="intro-aside" data-testid="story-aside">
-        <div className="story-paragraphs">
-          <p>To Duraimohan, preserving a classic is not simply about keeping an old car looking beautiful. It is about understanding the machine, maintaining its mechanical character and giving it the chance to move again. Every oil change, every adjustment, every repaired component and every early-morning drive becomes part of its continuing story.</p>
-          <p>A classic automobile demands patience. Parts have to be found or recreated. Mechanical systems have to be understood rather than simply replaced. Some cars arrive complete; others need to be rescued piece by piece. The reward is not perfection in the modern sense. It is the feeling of a machine returning to life and doing what it was built to do.</p>
-          <p>For Duraimohan, driving these cars is itself an act of preservation. The engine needs to run. The gearbox needs to be exercised. The brakes need to work. The tyres need to meet the road. A car's heritage lives most honestly when it is being driven.</p>
-        </div>
-        <span className="rule-label">Keep the engine warm. / Keep the story moving.</span>
-      </div>
+      <div className="section-kicker" data-testid="story-kicker"><span>02</span><span>Point of view</span></div><div className="intro-copy"><p className="eyebrow" data-testid="story-eyebrow">Preserved to be driven.</p><h2 data-testid="story-heading">History should not be locked away. It should be <em>kept alive.</em></h2></div>
+      <div className="intro-aside" data-testid="story-aside"><div className="story-paragraphs"><p>To Duraimohan, preserving a classic is not simply about keeping an old car looking beautiful. It is about understanding the machine, maintaining its mechanical character and giving it the chance to move again. Every oil change, every adjustment, every repaired component and every early-morning drive becomes part of its continuing story.</p><p>A classic automobile demands patience. Parts have to be found or recreated. Mechanical systems have to be understood rather than simply replaced. Some cars arrive complete; others need to be rescued piece by piece. The reward is not perfection in the modern sense. It is the feeling of a machine returning to life and doing what it was built to do.</p><p>For Duraimohan, driving these cars is itself an act of preservation. The engine needs to run. The gearbox needs to be exercised. The brakes need to work. The tyres need to meet the road. A car's heritage lives most honestly when it is being driven.</p></div><span className="rule-label">Keep the engine warm. / Keep the story moving.</span></div>
     </section>
   );
 }
 
 function EngineeringSection() {
-  const ideas = [
-    ["01", "Mechanical honesty", "Older cars make their mechanical lives visible. There is little separation between driver and machine. You hear the engine, feel the gearbox, understand the brakes and learn the habits of the car. Maintaining one requires more than replacing parts. It requires listening, observing and understanding how the machine was designed to work. That mechanical involvement is one of the reasons Duraimohan continues to work with these cars rather than simply display them."],
-    ["02", "Ideas that travelled", "The collection is also a map of automotive ideas. From the compact ingenuity of the Citroën 2CV and Fiat 1100 to the revolutionary packaging of the Mini, the practicality of the Volkswagen Bus, the rugged utility of the Willys Jeep and the engineering discipline of Mercedes-Benz, every vehicle represents a different answer to the same question: How should a machine move people through its time? Together, these cars tell a story that crosses countries, cultures and generations."],
-    ["03", "Still road-going", "A restored classic should have a life beyond the workshop. DMC cars are maintained with the intention of being driven, taken to gatherings, displayed at events and experienced as automobiles rather than museum objects. The occasional mechanical noise, the deliberate rhythm of an old gearbox and the smell of a warm engine are not imperfections to be hidden. They are reminders that these machines are alive. Preservation, at DMC, means keeping them capable of movement."],
-  ];
-  return (
-    <section className="engineering-section page-shell" data-testid="engineering-section">
-      <div className="engineering-intro"><span className="eyebrow" data-testid="engineering-eyebrow">Why it matters</span><h2 data-testid="engineering-heading">Every classic carries an idea <em>worth remembering.</em></h2><div className="engineering-introduction" data-testid="engineering-introduction"><p>The DMC collection spans from 1924 to 1993, crossing pre-war engineering, post-war reconstruction, the rise of mass motoring, Italian design, American optimism, British ingenuity, German engineering and India's own evolving automotive culture.</p><p>These machines were built in a world where mechanical understanding mattered. Their character came from physical components, clever solutions and engineering decisions that could often be seen, heard and felt from behind the wheel.</p></div></div>
-      <div className="engineering-list">{ideas.map(([number, title, body]) => <article key={number} data-testid={`engineering-card-${number}`}><span className="engineering-number">{number}</span><div><h3 data-testid={`engineering-title-${number}`}>{title}</h3><p data-testid={`engineering-copy-${number}`}>{body}</p></div></article>)}</div>
-    </section>
-  );
+  const ideas = [["01", "Mechanical honesty", "Older cars make their mechanical lives visible. There is little separation between driver and machine. You hear the engine, feel the gearbox, understand the brakes and learn the habits of the car. Maintaining one requires more than replacing parts. It requires listening, observing and understanding how the machine was designed to work. That mechanical involvement is one of the reasons Duraimohan continues to work with these cars rather than simply display them."],["02", "Ideas that travelled", "The collection is also a map of automotive ideas. From the compact ingenuity of the Citroën 2CV and Fiat 1100 to the revolutionary packaging of the Mini, the practicality of the Volkswagen Bus, the rugged utility of the Willys Jeep and the engineering discipline of Mercedes-Benz, every vehicle represents a different answer to the same question: How should a machine move people through its time? Together, these cars tell a story that crosses countries, cultures and generations."],["03", "Still road-going", "A restored classic should have a life beyond the workshop. DMC cars are maintained with the intention of being driven, taken to gatherings, displayed at events and experienced as automobiles rather than museum objects. The occasional mechanical noise, the deliberate rhythm of an old gearbox and the smell of a warm engine are not imperfections to be hidden. They are reminders that these machines are alive. Preservation, at DMC, means keeping them capable of movement."]];
+  return <section className="engineering-section page-shell" data-testid="engineering-section"><div className="engineering-intro"><span className="eyebrow" data-testid="engineering-eyebrow">Why it matters</span><h2 data-testid="engineering-heading">Every classic carries an idea <em>worth remembering.</em></h2><div className="engineering-introduction" data-testid="engineering-introduction"><p>The DMC collection spans from 1924 to 1993, crossing pre-war engineering, post-war reconstruction, the rise of mass motoring, Italian design, American optimism, British ingenuity, German engineering and India's own evolving automotive culture.</p><p>These machines were built in a world where mechanical understanding mattered. Their character came from physical components, clever solutions and engineering decisions that could often be seen, heard and felt from behind the wheel.</p></div></div><div className="engineering-list">{ideas.map(([number, title, body]) => <article key={number} data-testid={`engineering-card-${number}`}><span className="engineering-number">{number}</span><div><h3 data-testid={`engineering-title-${number}`}>{title}</h3><p data-testid={`engineering-copy-${number}`}>{body}</p></div></article>)}</div></section>;
 }
 
 function ProjectCard({ project, index, onOpen, galleryCount }) {
-  return (
-    <motion.button
-      type="button"
-      onClick={() => onOpen(project)}
-      className={`project-card ${project.className || "matrix-card"}`}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.65, delay: index * 0.08 }}
-      data-testid={`project-card-${project.number}`}
-    >
-      <div className="project-image-wrap">
-        <img src={project.images[0]} alt={project.name} className="project-image" data-testid={`project-image-${project.number}`} />
-        <span className="project-arrow" aria-hidden="true"><MoveUpRight size={18} strokeWidth={1.3} /></span>
-      </div>
-      <div className="project-meta">
-        <span className="project-number" data-testid={`project-number-${project.number}`}>{project.number}</span>
-        <div className="project-info">
-          <h3 data-testid={`project-title-${project.number}`}>{project.name}</h3>
-          <p data-testid={`project-type-${project.number}`}>{project.category} / {galleryCount} views</p>
-        </div>
-        <span className="project-year" data-testid={`project-year-${project.number}`}>{project.year}</span>
-      </div>
-      <p className="project-description" data-testid={`project-description-${project.number}`}>{project.excerpt}</p>
-    </motion.button>
-  );
+  return <motion.button type="button" onClick={() => onOpen(project)} className={`project-card ${project.className || "matrix-card"}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, delay: index * 0.08 }} data-testid={`project-card-${project.number}`}><div className="project-image-wrap"><img src={project.images[0]} alt={project.name} className="project-image" data-testid={`project-image-${project.number}`} /><span className="project-arrow" aria-hidden="true"><MoveUpRight size={18} strokeWidth={1.3} /></span></div><div className="project-meta"><span className="project-number" data-testid={`project-number-${project.number}`}>{project.number}</span><div className="project-info"><h3 data-testid={`project-title-${project.number}`}>{project.name}</h3><p data-testid={`project-type-${project.number}`}>{project.category} / {galleryCount} views</p></div><span className="project-year" data-testid={`project-year-${project.number}`}>{project.year}</span></div><p className="project-description" data-testid={`project-description-${project.number}`}>{project.excerpt}</p></motion.button>;
 }
 
-function Archive({ onCarOpen, galleries }) {
-  return (
-    <section className="archive-section page-shell" id="archive" data-testid="archive-section">
-      <div className="section-heading-row">
-        <div className="section-kicker" data-testid="archive-kicker"><span>03</span><span>The Collection</span></div>
-      </div>
-      <div className="archive-heading">
-        <h2 data-testid="archive-heading">Twenty-five machines.<br /><em>One living archive.</em></h2>
-        <div className="archive-description" data-testid="archive-description"><p>The DMC register brings together 25 classics spanning nearly seven decades of motoring history: 22 automobiles and three two-wheelers, from a 1924 Chevrolet to a 1993 Mercedes-Benz W124 300D.</p><p>But the register is only the beginning.</p><p>Every vehicle entered the collection for a reason. Some represent remarkable engineering. Some carry the character of a particular country or era. Some were simply too interesting to leave behind. And some required someone willing to see beyond their condition and imagine what they could become again.</p><p>Duraimohan's relationship with these machines has evolved from youthful experimentation and modification to restoration, preservation and rescue. The collection therefore isn't defined only by age or rarity. It is defined by the work, knowledge and passion required to keep each one alive.</p></div>
-      </div>
-      <div className="projects-grid matrix-grid" data-testid="projects-grid">
-        {cars.map((car, index) => <ProjectCard key={car.id} project={car} index={index} galleryCount={(galleries[car.id] || []).length || car.images.length} onOpen={onCarOpen} />)}
-      </div>
-    </section>
-  );
+function Archive({ onCarOpen, galleries, cars: collectionCars }) {
+  return <section className="archive-section page-shell" id="archive" data-testid="archive-section"><div className="section-heading-row"><div className="section-kicker" data-testid="archive-kicker"><span>03</span><span>The Collection</span></div></div><div className="archive-heading"><h2 data-testid="archive-heading">Twenty-five machines.<br /><em>One living archive.</em></h2><div className="archive-description" data-testid="archive-description"><p>The DMC register brings together 25 classics spanning nearly seven decades of motoring history: 22 automobiles and three two-wheelers, from a 1924 Chevrolet to a 1993 Mercedes-Benz W124 300D.</p><p>But the register is only the beginning.</p><p>Every vehicle entered the collection for a reason. Some represent remarkable engineering. Some carry the character of a particular country or era. Some were simply too interesting to leave behind. And some required someone willing to see beyond their condition and imagine what they could become again.</p><p>Duraimohan's relationship with these machines has evolved from youthful experimentation and modification to restoration, preservation and rescue. The collection therefore isn't defined only by age or rarity. It is defined by the work, knowledge and passion required to keep each one alive.</p></div></div><div className="projects-grid matrix-grid" data-testid="projects-grid">{collectionCars.map((car, index) => <ProjectCard key={car.id} project={car} index={index} galleryCount={(galleries[car.id] || []).length || car.images.length} onOpen={onCarOpen} />)}</div></section>;
 }
 
 function ArchiveBand() {
-  return (
-    <section className="archive-band" data-testid="archive-stats-section">
-      <div className="page-shell band-grid">
-        <div><span className="stat-value" data-testid="stat-years">30<span>+</span></span><span className="stat-label" data-testid="stat-years-label">Years of Heritage</span><p className="stat-copy" data-testid="stat-years-copy">DMC's story began in 1996, growing through decades of searching, restoring, maintaining and driving classic machines.</p></div>
-        <div><span className="stat-value" data-testid="stat-vehicles">25</span><span className="stat-label" data-testid="stat-vehicles-label">Classics in the Register</span><p className="stat-copy" data-testid="stat-vehicles-copy">22 automobiles and 3 two-wheel classics spanning 1924 to 1993.</p></div>
-        <div><span className="stat-value" data-testid="stat-shows">50<span>+</span></span><span className="stat-label" data-testid="stat-shows-label">Shows &amp; Events</span><p className="stat-copy" data-testid="stat-shows-copy">Classic-car shows, rallies, heritage displays, club gatherings and motoring events across South India.</p></div>
-        <p data-testid="archive-band-note">The numbers tell only part of the story. The real measure of DMC is not simply how many cars have been collected, but how many stories have been kept moving.</p>
-      </div>
-    </section>
-  );
+  return <section className="archive-band" data-testid="archive-stats-section"><div className="page-shell band-grid"><div><span className="stat-value" data-testid="stat-years">30<span>+</span></span><span className="stat-label" data-testid="stat-years-label">Years of Heritage</span><p className="stat-copy" data-testid="stat-years-copy">DMC's story began in 1996, growing through decades of searching, restoring, maintaining and driving classic machines.</p></div><div><span className="stat-value" data-testid="stat-vehicles">25</span><span className="stat-label" data-testid="stat-vehicles-label">Classics in the Register</span><p className="stat-copy" data-testid="stat-vehicles-copy">22 automobiles and 3 two-wheel classics spanning 1924 to 1993.</p></div><div><span className="stat-value" data-testid="stat-shows">50<span>+</span></span><span className="stat-label" data-testid="stat-shows-label">Shows &amp; Events</span><p className="stat-copy" data-testid="stat-shows-copy">Classic-car shows, rallies, heritage displays, club gatherings and motoring events across South India.</p></div><p data-testid="archive-band-note">The numbers tell only part of the story. The real measure of DMC is not simply how many cars have been collected, but how many stories have been kept moving.</p></div></section>;
 }
 
 function InquiryForm() {
-  const [submitted, setSubmitted] = useState(false);
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setSubmitted(true);
-  };
-
-  return (
-    <section className="inquire-section page-shell" id="inquire" data-testid="inquire-section">
-      <div className="section-kicker" data-testid="inquire-kicker"><span>04</span><span>Start a conversation</span></div>
-      <div className="inquire-layout">
-        <div className="inquire-copy">
-          <h2 data-testid="inquire-heading">Let’s talk<br /><em>classics.</em></h2>
-          <div className="inquire-description" data-testid="inquire-description"><p>Classic cars have a way of starting conversations. A familiar badge, an unusual body style, the sound of an old engine or a memory of a car from childhood can connect complete strangers.</p><p>DMC welcomes conversations with fellow enthusiasts, collectors, restoration specialists, clubs, event organisers, historians, photographers and anyone with a genuine interest in preserving automotive heritage.</p><p>Whether it is about a particular vehicle, an old photograph, a restoration story, a classic-car event or simply a shared memory of a machine that once mattered, every conversation helps add another piece to the archive.</p></div>
-          <div className="direct-contact" data-testid="direct-contact">
-            <span className="eyebrow">Duraimohan V / Founder &amp; Collector</span>
-            <a href="tel:+919444009900" data-testid="direct-phone-link">9444009900</a>
-            <a href="mailto:Chevy.dm@gmail.com" data-testid="direct-email-link">Chevy.dm@gmail.com</a>
-            <p className="inquiry-note" data-testid="inquiry-note">For collections, collaborations, classic-car events, restoration conversations and automotive heritage enquiries.</p>
-          </div>
-        </div>
-        <div className="form-panel">
-          {submitted ? (
-            <motion.div className="form-success" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} data-testid="form-success-message">
-              <span className="success-icon"><Check size={18} /></span>
-              <p className="eyebrow">Message received</p>
-              <h3>We’ll be in touch.</h3>
-              <p>Your note is now part of the conversation. Thank you for reaching out to DMC.</p>
-              <button type="button" className="text-link button-link" onClick={() => setSubmitted(false)} data-testid="form-send-another-button">Send another note <ArrowRight size={16} /></button>
-            </motion.div>
-          ) : (
-            <form onSubmit={handleSubmit} data-testid="inquiry-form">
-              <label htmlFor="name">Your name<input id="name" name="name" type="text" placeholder="Your name" required data-testid="inquiry-name-input" /></label>
-              <label htmlFor="email">Email address<input id="email" name="email" type="email" placeholder="you@example.com" required data-testid="inquiry-email-input" /></label>
-              <label htmlFor="message">Your note<textarea id="message" name="message" rows="4" placeholder="Tell us what brings you here..." required data-testid="inquiry-message-input" /></label>
-              <button className="submit-button" type="submit" data-testid="inquiry-submit-button">Send inquiry <ArrowRight size={17} strokeWidth={1.4} /></button>
-            </form>
-          )}
-        </div>
-      </div>
-    </section>
-  );
+  const [submitted, setSubmitted] = useState(false); const [sending, setSending] = useState(false); const [error, setError] = useState("");
+  const handleSubmit = async (event) => { event.preventDefault(); setSending(true); setError(""); const form = new FormData(event.currentTarget); const name = String(form.get("name") || "").trim(); const email = String(form.get("email") || "").trim(); const message = String(form.get("message") || "").trim(); const { error: insertError } = await supabase.from("enquiries").insert({ name, email, message }); setSending(false); if (insertError) { setError("We could not send your note right now. Please email us directly."); return; } event.currentTarget.reset(); setSubmitted(true); };
+  return <section className="inquire-section page-shell" id="inquire" data-testid="inquire-section"><div className="section-kicker" data-testid="inquire-kicker"><span>04</span><span>Start a conversation</span></div><div className="inquire-layout"><div className="inquire-copy"><h2 data-testid="inquire-heading">Let’s talk<br /><em>classics.</em></h2><div className="inquire-description" data-testid="inquire-description"><p>Classic cars have a way of starting conversations. A familiar badge, an unusual body style, the sound of an old engine or a memory of a car from childhood can connect complete strangers.</p><p>DMC welcomes conversations with fellow enthusiasts, collectors, restoration specialists, clubs, event organisers, historians, photographers and anyone with a genuine interest in preserving automotive heritage.</p><p>Whether it is about a particular vehicle, an old photograph, a restoration story, a classic-car event or simply a shared memory of a machine that once mattered, every conversation helps add another piece to the archive.</p></div><div className="direct-contact" data-testid="direct-contact"><span className="eyebrow">Duraimohan V / Founder &amp; Collector</span><a href="tel:+919444009900" data-testid="direct-phone-link">9444009900</a><a href="mailto:Chevy.dm@gmail.com" data-testid="direct-email-link">Chevy.dm@gmail.com</a><p className="inquiry-note" data-testid="inquiry-note">For collections, collaborations, classic-car events, restoration conversations and automotive heritage enquiries.</p></div></div><div className="form-panel">{submitted ? <motion.div className="form-success" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} data-testid="form-success-message"><span className="success-icon"><Check size={18} /></span><p className="eyebrow">Message received</p><h3>We’ll be in touch.</h3><p>Your note has been added to the DMC enquiry desk. Thank you for reaching out.</p><button type="button" className="text-link button-link" onClick={() => setSubmitted(false)} data-testid="form-send-another-button">Send another note <ArrowRight size={16} /></button></motion.div> : <form onSubmit={handleSubmit} data-testid="inquiry-form"><label htmlFor="name">Your name<input id="name" name="name" type="text" placeholder="Your name" required data-testid="inquiry-name-input" /></label><label htmlFor="email">Email address<input id="email" name="email" type="email" placeholder="you@example.com" required data-testid="inquiry-email-input" /></label><label htmlFor="message">Your note<textarea id="message" name="message" rows="4" placeholder="Tell us what brings you here..." required data-testid="inquiry-message-input" /></label>{error && <p className="pin-error" role="alert">{error}</p>}<button className="submit-button" type="submit" disabled={sending} data-testid="inquiry-submit-button">{sending ? "Sending…" : "Send inquiry"} <ArrowRight size={17} strokeWidth={1.4} /></button></form>}</div></div></section>;
 }
 
 function CarGalleryModal({ car, images, onClose }) {
   const [activeImage, setActiveImage] = useState(images[0]);
-  return (
-    <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }} data-testid="car-gallery-modal">
-      <motion.div className="gallery-modal" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} role="dialog" aria-modal="true" aria-labelledby="gallery-title">
-        <div className="gallery-modal-top"><span className="eyebrow">DMC / {car.number}</span><button type="button" onClick={onClose} aria-label="Close car gallery" data-testid="car-gallery-close-button"><X size={21} strokeWidth={1.3} /></button></div>
-        <div className="gallery-modal-content">
-          <div className="gallery-main-image"><img src={activeImage} alt={`${car.name} gallery view`} data-testid="car-gallery-active-image" /></div>
-          <div className="gallery-details">
-            <p className="eyebrow" data-testid="car-gallery-year">{car.year} / {car.category}</p>
-            <h2 id="gallery-title" data-testid="car-gallery-title">{car.name}</h2>
-            <p data-testid="car-gallery-description">{car.description}</p>
-            <div className="gallery-thumbnails" data-testid="car-gallery-thumbnails">
-              {images.map((image, index) => <button type="button" key={image} className={activeImage === image ? "thumbnail active" : "thumbnail"} onClick={() => setActiveImage(image)} data-testid={`car-gallery-thumbnail-${index + 1}`}><img src={image} alt={`${car.name} view ${index + 1}`} /></button>)}
-            </div>
-            <span className="gallery-footnote" data-testid="car-gallery-count">{images.length} {images.length === 1 ? "image" : "images"} in this gallery</span>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
+  return <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }} data-testid="car-gallery-modal"><motion.div className="gallery-modal" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} role="dialog" aria-modal="true" aria-labelledby="gallery-title"><div className="gallery-modal-top"><span className="eyebrow">DMC / {car.number}</span><button type="button" onClick={onClose} aria-label="Close car gallery" data-testid="car-gallery-close-button"><X size={21} strokeWidth={1.3} /></button></div><div className="gallery-modal-content"><div className="gallery-main-image"><img src={activeImage} alt={`${car.name} gallery view`} data-testid="car-gallery-active-image" /></div><div className="gallery-details"><p className="eyebrow" data-testid="car-gallery-year">{car.year} / {car.category}</p><h2 id="gallery-title" data-testid="car-gallery-title">{car.name}</h2><p data-testid="car-gallery-description">{car.description}</p><div className="gallery-thumbnails" data-testid="car-gallery-thumbnails">{images.map((image, index) => <button type="button" key={image} className={activeImage === image ? "thumbnail active" : "thumbnail"} onClick={() => setActiveImage(image)} data-testid={`car-gallery-thumbnail-${index + 1}`}><img src={image} alt={`${car.name} view ${index + 1}`} /></button>)}</div><span className="gallery-footnote" data-testid="car-gallery-count">{images.length} {images.length === 1 ? "image" : "images"} in this gallery</span></div></div></motion.div></div>;
 }
 
-function AdminPanel({ onClose, galleries, onSaveGallery }) {
-  const [unlocked, setUnlocked] = useState(false);
-  const [pin, setPin] = useState("");
-  const [pinError, setPinError] = useState(false);
-  const [selectedCarId, setSelectedCarId] = useState(cars[0].id);
-  const [pendingFiles, setPendingFiles] = useState([]);
-  const selectedCar = cars.find((car) => car.id === selectedCarId) || cars[0];
-  const currentImages = galleries[selectedCar.id] || [];
-
-  const unlock = (event) => {
-    event.preventDefault();
-    if (pin === "2704") { setUnlocked(true); setPinError(false); } else setPinError(true);
-  };
-  const readFiles = (event) => {
-    const files = Array.from(event.target.files || []);
-    Promise.all(files.map((file) => new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve({ name: file.name, src: reader.result });
-      reader.readAsDataURL(file);
-    }))).then((items) => setPendingFiles((existing) => [...existing, ...items]));
-  };
-  const saveFiles = () => {
-    if (!pendingFiles.length) return;
-    onSaveGallery(selectedCar.id, [...currentImages, ...pendingFiles.map((file) => file.src)]);
-    setPendingFiles([]);
-  };
-  const removeImage = (index) => onSaveGallery(selectedCar.id, currentImages.filter((_, imageIndex) => imageIndex !== index));
-
-  return (
-    <div className="admin-backdrop" data-testid="admin-panel">
-      <motion.aside className="admin-panel" initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}>
-        <div className="admin-panel-top"><div><span className="eyebrow">DMC / Collection office</span><h2>Collection archive</h2></div><button type="button" onClick={onClose} aria-label="Close admin panel" data-testid="admin-close-button"><X size={22} strokeWidth={1.3} /></button></div>
-        {!unlocked ? (
-          <form className="pin-form" onSubmit={unlock} data-testid="admin-pin-form">
-            <p data-testid="admin-pin-instructions">Enter your four-digit PIN to manage the vehicle galleries.</p>
-            <label htmlFor="admin-pin">Access PIN<input id="admin-pin" type="password" inputMode="numeric" maxLength="4" value={pin} onChange={(event) => { setPin(event.target.value.replace(/\D/g, "")); setPinError(false); }} placeholder="••••" required data-testid="admin-pin-input" /></label>
-            {pinError && <p className="pin-error" data-testid="admin-pin-error">That PIN doesn’t match. Try again.</p>}
-            <button type="submit" className="submit-button" data-testid="admin-pin-submit-button">Unlock archive <ArrowRight size={17} /></button>
-          </form>
-        ) : (
-          <div className="admin-editor" data-testid="admin-editor">
-            <div className="admin-unlocked"><span className="success-icon"><Check size={17} /></span><div><span className="eyebrow">Access granted</span><p>Manage each car’s gallery below.</p></div></div>
-            <label htmlFor="car-select">Choose vehicle<select id="car-select" value={selectedCarId} onChange={(event) => { setSelectedCarId(event.target.value); setPendingFiles([]); }} data-testid="admin-car-select">{cars.map((car) => <option value={car.id} key={car.id}>{car.number} / {car.year} — {car.name}</option>)}</select></label>
-            <div className="upload-zone"><input id="car-images" type="file" accept="image/*" multiple onChange={readFiles} data-testid="admin-image-upload-input" /><label htmlFor="car-images" className="upload-label" data-testid="admin-image-upload-label"><ArrowDownRight size={20} /><span><strong>Add vehicle pictures</strong><small>Choose multiple JPG, PNG or WebP files</small></span></label></div>
-            {pendingFiles.length > 0 && <div className="pending-files" data-testid="admin-pending-files"><div className="pending-preview-list">{pendingFiles.map((file, index) => <div className="pending-preview" key={`${file.name}-${index}`}><img src={file.src} alt={`Pending upload ${index + 1}`} /><button type="button" onClick={() => setPendingFiles((existing) => existing.filter((_, fileIndex) => fileIndex !== index))} aria-label={`Remove pending upload ${index + 1}`} data-testid={`admin-remove-pending-${index + 1}`}><X size={14} /></button></div>)}</div><div className="pending-actions"><span>{pendingFiles.length} new {pendingFiles.length === 1 ? "picture" : "pictures"} ready</span><button type="button" className="text-link button-link" onClick={saveFiles} data-testid="admin-save-images-button">Save to {selectedCar.name} <Check size={15} /></button></div></div>}
-            <div className="admin-gallery" data-testid="admin-current-gallery"><div className="admin-gallery-heading"><span>Saved gallery</span><span>{currentImages.length} images</span></div>{currentImages.map((image, index) => <div className="admin-image-row" key={`${image}-${index}`}><img src={image} alt={`${selectedCar.name} saved view ${index + 1}`} /><span>/{selectedCar.id}/image-{index + 1}</span><button type="button" onClick={() => removeImage(index)} aria-label={`Remove image ${index + 1}`} data-testid={`admin-remove-image-${index + 1}`}><X size={15} /></button></div>)}</div>
-          </div>
-        )}
-      </motion.aside>
-    </div>
-  );
+function AdminPanel({ onClose, collectionCars, onRefresh }) {
+  const [session, setSession] = useState(null); const [email, setEmail] = useState("gearsganesh@gmail.com"); const [password, setPassword] = useState(""); const [loginError, setLoginError] = useState(""); const [selectedCarId, setSelectedCarId] = useState(collectionCars[0]?.id || ""); const [adminImages, setAdminImages] = useState([]); const [pendingFiles, setPendingFiles] = useState([]); const [busy, setBusy] = useState(false); const selectedCar = collectionCars.find((car) => car.id === selectedCarId) || collectionCars[0];
+  useEffect(() => { supabase.auth.getSession().then(({ data }) => setSession(data.session)); const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => setSession(nextSession)); return () => listener.subscription.unsubscribe(); }, []);
+  const loadImages = async () => { if (!selectedCar?.id || !session) return; const { data, error } = await supabase.from("vehicle_images").select("id,image_url,storage_path,caption,sort_order").eq("vehicle_id", selectedCar.id).order("sort_order").order("created_at"); if (!error) setAdminImages(data || []); };
+  useEffect(() => { loadImages(); }, [selectedCarId, session]);
+  const unlock = async (event) => { event.preventDefault(); setBusy(true); setLoginError(""); const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password }); setBusy(false); if (error) { setLoginError(error.message || "Unable to sign in."); return; } setSession(data.session); };
+  const readFiles = (event) => setPendingFiles((existing) => [...existing, ...Array.from(event.target.files || [])]);
+  const saveFiles = async () => { if (!pendingFiles.length || !selectedCar || !session) return; setBusy(true); setLoginError(""); try { const uploaded = []; for (const file of pendingFiles) { const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, "-"); const path = `${selectedCar.id}/${Date.now()}-${safeName}`; const { error: uploadError } = await supabase.storage.from("vehicle-images").upload(path, file, { cacheControl: "3600", upsert: false }); if (uploadError) throw uploadError; const { data: publicData } = supabase.storage.from("vehicle-images").getPublicUrl(path); uploaded.push({ vehicle_id: selectedCar.id, image_url: publicData.publicUrl, storage_path: path, sort_order: adminImages.length + uploaded.length }); } const { error: insertError } = await supabase.from("vehicle_images").insert(uploaded); if (insertError) throw insertError; if (!selectedCar.cover_image && uploaded[0]) { const { error: coverError } = await supabase.from("vehicles").update({ cover_image: uploaded[0].image_url }).eq("id", selectedCar.id); if (coverError) throw coverError; } setPendingFiles([]); await loadImages(); await onRefresh(); } catch (error) { setLoginError(error.message || "Upload failed. Check Supabase Storage policies."); } finally { setBusy(false); } };
+  const removeImage = async (image) => { setBusy(true); setLoginError(""); try { if (image.storage_path) { const { error: storageError } = await supabase.storage.from("vehicle-images").remove([image.storage_path]); if (storageError) throw storageError; } const { error } = await supabase.from("vehicle_images").delete().eq("id", image.id); if (error) throw error; await loadImages(); await onRefresh(); } catch (error) { setLoginError(error.message || "Could not delete image."); } finally { setBusy(false); } };
+  const signOut = async () => { await supabase.auth.signOut(); setSession(null); setAdminImages([]); };
+  return <div className="admin-backdrop" data-testid="admin-panel"><motion.aside className="admin-panel" initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}><div className="admin-panel-top"><div><span className="eyebrow">DMC / Collection office</span><h2>Collection archive</h2></div><button type="button" onClick={onClose} aria-label="Close admin panel" data-testid="admin-close-button"><X size={22} strokeWidth={1.3} /></button></div>{!session ? <form className="pin-form" onSubmit={unlock} data-testid="admin-pin-form"><p>Sign in with your DMC collection office account.</p><label htmlFor="admin-email">Email<input id="admin-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" required data-testid="admin-email-input" /></label><label htmlFor="admin-password">Password<input id="admin-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required data-testid="admin-password-input" /></label>{loginError && <p className="pin-error" data-testid="admin-pin-error">{loginError}</p>}<button type="submit" className="submit-button" disabled={busy} data-testid="admin-pin-submit-button">{busy ? "Signing in…" : "Sign in"} <ArrowRight size={17} /></button></form> : <div className="admin-editor" data-testid="admin-editor"><div className="admin-unlocked"><span className="success-icon"><Check size={17} /></span><div><span className="eyebrow">Access granted</span><p>{session.user.email}</p></div><button type="button" className="text-link button-link" onClick={signOut}>Sign out</button></div><label htmlFor="car-select">Choose vehicle<select id="car-select" value={selectedCarId} onChange={(event) => { setSelectedCarId(event.target.value); setPendingFiles([]); }} data-testid="admin-car-select">{collectionCars.map((car) => <option value={car.id} key={car.id}>{car.number} / {car.year} — {car.name}</option>)}</select></label><div className="upload-zone"><input id="car-images" type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={readFiles} data-testid="admin-image-upload-input" /><label htmlFor="car-images" className="upload-label" data-testid="admin-image-upload-label"><ArrowDownRight size={20} /><span><strong>Add vehicle pictures</strong><small>Choose multiple JPG, PNG or WebP files</small></span></label></div>{pendingFiles.length > 0 && <div className="pending-files" data-testid="admin-pending-files"><div className="pending-preview-list">{pendingFiles.map((file, index) => <div className="pending-preview" key={`${file.name}-${index}`}><img src={URL.createObjectURL(file)} alt={`Pending upload ${index + 1}`} /><button type="button" onClick={() => setPendingFiles((existing) => existing.filter((_, fileIndex) => fileIndex !== index))} aria-label={`Remove pending upload ${index + 1}`}><X size={14} /></button></div>)}</div><div className="pending-actions"><span>{pendingFiles.length} new {pendingFiles.length === 1 ? "picture" : "pictures"} ready</span><button type="button" className="text-link button-link" onClick={saveFiles} disabled={busy}>Save to {selectedCar?.name} <Check size={15} /></button></div></div>}{loginError && <p className="pin-error" role="alert">{loginError}</p>}<div className="admin-gallery" data-testid="admin-current-gallery"><div className="admin-gallery-heading"><span>Saved gallery</span><span>{adminImages.length} images</span></div>{adminImages.map((image, index) => <div className="admin-image-row" key={image.id}><img src={image.image_url} alt={`${selectedCar.name} saved view ${index + 1}`} /><span>/{selectedCar.id}/image-{index + 1}</span><button type="button" onClick={() => removeImage(image)} aria-label={`Remove image ${index + 1}`} disabled={busy}><X size={15} /></button></div>)}</div></div>}</motion.aside></div>;
 }
 
 function Footer() {
-  return (
-    <footer className="site-footer" data-testid="site-footer">
-      <div className="page-shell footer-main">
-        <img src="/assets/dmc-concours-square.png" alt="Duraimohan Classics — Restoration, Heritage, Preservation" className="footer-logo" data-testid="footer-logo" />
-        <div className="footer-story"><p data-testid="footer-tagline">Not just cars.<br /><em>A piece of history, kept alive.</em></p><p data-testid="footer-description">Duraimohan Classics is a living collection of automobiles and two-wheelers gathered through a lifelong passion for machines. From youthful experimentation and modification to restoration, rescue and preservation, DMC exists to keep these vehicles understood, maintained and moving.<br /><br />Because an old car becomes heritage not when it stops, but when someone cares enough to keep it going.</p></div>
-        <div className="footer-links">
-          <div><span className="eyebrow">Explore</span><a href="#archive" data-testid="footer-archive-link">Archive</a><a href="#story" data-testid="footer-story-link">The story</a><a href="#inquire" data-testid="footer-inquire-link">Inquire</a></div>
-          <div><span className="eyebrow">Follow along</span><a href="https://instagram.com" target="_blank" rel="noreferrer" data-testid="footer-instagram-link"><Instagram size={16} /> Instagram</a><a href="mailto:Chevy.dm@gmail.com" data-testid="footer-email-link">Email us</a></div>
-        </div>
-      </div>
-      <div className="page-shell footer-bottom"><span data-testid="footer-copyright">© 2026 Duraimohan Classics</span><span data-testid="footer-location">South India</span><span data-testid="footer-credit">Heritage / Passion / Preservation</span></div>
-    </footer>
-  );
+  return <footer className="site-footer" data-testid="site-footer"><div className="page-shell footer-main"><img src="/assets/dmc-concours-square.png" alt="Duraimohan Classics — Restoration, Heritage, Preservation" className="footer-logo" data-testid="footer-logo" /><div className="footer-story"><p data-testid="footer-tagline">Not just cars.<br /><em>A piece of history, kept alive.</em></p><p data-testid="footer-description">Duraimohan Classics is a living collection of automobiles and two-wheelers gathered through a lifelong passion for machines. From youthful experimentation and modification to restoration, rescue and preservation, DMC exists to keep these vehicles understood, maintained and moving.<br /><br />Because an old car becomes heritage not when it stops, but when someone cares enough to keep it going.</p></div><div className="footer-links"><div><span className="eyebrow">Explore</span><a href="#archive" data-testid="footer-archive-link">Archive</a><a href="#story" data-testid="footer-story-link">The story</a><a href="#inquire" data-testid="footer-inquire-link">Inquire</a></div><div><span className="eyebrow">Follow along</span><a href="https://instagram.com" target="_blank" rel="noreferrer" data-testid="footer-instagram-link"><Instagram size={16} /> Instagram</a><a href="mailto:Chevy.dm@gmail.com" data-testid="footer-email-link">Email us</a></div></div></div><div className="page-shell footer-bottom"><span data-testid="footer-copyright">© 2026 Duraimohan Classics</span><span data-testid="footer-location">South India</span><span data-testid="footer-credit">Heritage / Passion / Preservation</span></div></footer>;
 }
 
-function AdminRoute({ galleries, onSaveGallery }) {
-  return <div className="admin-route" data-testid="admin-route"><AdminPanel onClose={() => { window.location.href = "/"; }} galleries={galleries} onSaveGallery={onSaveGallery} /></div>;
-}
+function AdminRoute({ collectionCars, onRefresh }) { return <div className="admin-route" data-testid="admin-route"><AdminPanel onClose={() => { window.location.href = "/"; }} collectionCars={collectionCars} onRefresh={onRefresh} /></div>; }
+
+function normalizeVehicle(row, imageUrls = []) { const fallback = cars.find((car) => car.number === String(row.number || "")); return { id: row.id, number: row.number || fallback?.number || "", year: row.year || fallback?.year || "", name: row.title || [row.make, row.model].filter(Boolean).join(" ") || fallback?.name || "DMC Classic", excerpt: row.excerpt || fallback?.excerpt || "", description: row.description || fallback?.description || "", category: row.category || fallback?.category || "Automobile archive", images: imageUrls.length ? imageUrls : (row.cover_image ? [row.cover_image] : (fallback?.images || [])), cover_image: row.cover_image || imageUrls[0] || fallback?.images?.[0] || "" }; }
 
 export default function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [selectedCar, setSelectedCar] = useState(null);
-  const [galleries, setGalleries] = useState(() => {
-    try { return JSON.parse(window.localStorage.getItem("dmc-galleries-v1") || "{}"); } catch { return {}; }
-  });
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 32);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    document.body.dataset.scrolled = scrolled ? "true" : "false";
-  }, [scrolled]);
-
-  const saveGallery = (carId, images) => {
-    setGalleries((existing) => {
-      const next = { ...existing, [carId]: images };
-      window.localStorage.setItem("dmc-galleries-v1", JSON.stringify(next));
-      return next;
-    });
-  };
-  const galleryFor = (car) => galleries[car.id] && galleries[car.id].length ? galleries[car.id] : car.images;
-
-  if (window.location.pathname === "/admin") {
-    return <AdminRoute galleries={galleries} onSaveGallery={saveGallery} />;
-  }
-
-  return (
-    <div className="app-shell" data-testid="dmc-portfolio-app">
-      <VantaBackdrop />
-      <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
-      <main>
-        <Hero />
-        <IntroSection />
-        <EngineeringSection />
-        <Archive onCarOpen={setSelectedCar} galleries={galleries} />
-        <ArchiveBand />
-        <InquiryForm />
-      </main>
-      <Footer />
-      <button type="button" className="back-to-top" onClick={() => scrollToId("#top")} aria-label="Back to top" data-testid="back-to-top-button"><ChevronDown size={17} /></button>
-      <AnimatePresence>{selectedCar && <CarGalleryModal car={selectedCar} images={galleryFor(selectedCar)} onClose={() => setSelectedCar(null)} />}</AnimatePresence>
-    </div>
-  );
+  const [menuOpen, setMenuOpen] = useState(false); const [scrolled, setScrolled] = useState(false); const [selectedCar, setSelectedCar] = useState(null); const [collectionCars, setCollectionCars] = useState(cars); const [galleries, setGalleries] = useState({});
+  const loadCollection = async () => { const { data: vehicleRows, error: vehicleError } = await supabase.from("vehicles").select("*").order("sort_order", { ascending: true }).order("number", { ascending: true }); if (vehicleError || !vehicleRows?.length) return; const ids = vehicleRows.map((row) => row.id); const { data: imageRows } = await supabase.from("vehicle_images").select("vehicle_id,image_url,sort_order,created_at").in("vehicle_id", ids).order("sort_order").order("created_at"); const grouped = {}; (imageRows || []).forEach((image) => { (grouped[image.vehicle_id] ||= []).push(image.image_url); }); setCollectionCars(vehicleRows.map((row) => normalizeVehicle(row, grouped[row.id] || []))); setGalleries(grouped); };
+  useEffect(() => { loadCollection(); }, []);
+  useEffect(() => { const onScroll = () => setScrolled(window.scrollY > 32); window.addEventListener("scroll", onScroll, { passive: true }); return () => window.removeEventListener("scroll", onScroll); }, []);
+  useEffect(() => { document.body.dataset.scrolled = scrolled ? "true" : "false"; }, [scrolled]);
+  const galleryFor = (car) => galleries[car.id]?.length ? galleries[car.id] : car.images;
+  if (window.location.pathname === "/admin") return <AdminRoute collectionCars={collectionCars} onRefresh={loadCollection} />;
+  return <div className="app-shell" data-testid="dmc-portfolio-app"><VantaBackdrop /><Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} /><main><Hero /><IntroSection /><EngineeringSection /><Archive onCarOpen={setSelectedCar} galleries={galleries} cars={collectionCars} /><ArchiveBand /><InquiryForm /></main><Footer /><button type="button" className="back-to-top" onClick={() => scrollToId("#top")} aria-label="Back to top" data-testid="back-to-top-button"><ChevronDown size={17} /></button><AnimatePresence>{selectedCar && <CarGalleryModal car={selectedCar} images={galleryFor(selectedCar)} onClose={() => setSelectedCar(null)} />}</AnimatePresence></div>;
 }
