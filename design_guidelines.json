@@ -1,0 +1,109 @@
+{
+  "theme": {
+    "mode": "dark",
+    "archetype": "ARCHETYPE 5: LUXURY mixed with SWISS BRUTALIST",
+    "description": "A high-end, cinematic dark mode experience. Designed specifically to make the user's provided background asset and logo the central visual anchors. Heavy emphasis on negative space, deep contrasts, and bold typography."
+  },
+  "typography": {
+    "fonts": {
+      "heading": "Cabinet Grotesk",
+      "body": "Manrope",
+      "accent": "JetBrains Mono"
+    },
+    "hierarchy": {
+      "h1": "text-5xl md:text-6xl+ font-light tracking-tighter",
+      "h2": "text-3xl md:text-5xl font-light tracking-tight",
+      "h3": "text-xl md:text-2xl font-medium",
+      "body": "text-base leading-relaxed text-zinc-400",
+      "overline": "text-xs font-mono uppercase tracking-[0.2em] text-zinc-500"
+    },
+    "rules": [
+      "CRITICAL: Do NOT use Inter, Roboto, or generic sans for headings.",
+      "CRITICAL: Use tight letter spacing (tracking-tighter) for all headings above 32px.",
+      "Never center-align large blocks of text; maintain a strong left alignment for brutalist tension."
+    ]
+  },
+  "colors": {
+    "palette": {
+      "background": "#0A0A0A",
+      "surface": "#141414",
+      "border": "rgba(255, 255, 255, 0.1)",
+      "text_primary": "#FFFFFF",
+      "text_secondary": "#A1A1AA",
+      "accent": "Extract dominant color from the provided logo (Fallback: #F3F4F6)"
+    },
+    "rules": [
+      "No generic full-screen gradients. Use the provided background asset.",
+      "Ensure text meets APCA/WCAG contrast standards.",
+      "Never use pure #000000. Base is #0A0A0A."
+    ]
+  },
+  "layouts": {
+    "spacing": {
+      "sections": "py-24 md:py-32",
+      "elements": "gap-8 md:gap-12"
+    },
+    "grid_system": {
+      "type": "MODE A: THE TETRIS GRID",
+      "description": "Bento-style grid for the project showcase. Goal: Asymmetry and Visual Tension.",
+      "rules": "Base grid md:grid-cols-12 gap-8. Mix col-span-8 row-span-2 for hero images, col-span-4 row-span-1 for details."
+    }
+  },
+  "components": {
+    "header": "Crystal Glassmorphism. backdrop-blur-xl bg-black/60 border-b border-white/10. MUST have background, no transparent headers.",
+    "hero": "Immersive hero relying on the provided background file. CRITICAL: Max overlay opacity bg-black/50 or a gradient overlay to ensure text contrast without killing the image.",
+    "project_card": "Cardless by default. Image with sharp borders, text underneath. Hover state scales image inside a hidden overflow container.",
+    "form": "Shadcn based. Dark flat inputs (bg-white/5), no borders until focus (focus:border-white/30 focus:ring-1).",
+    "toast": "Use Sonner for the confirmation feedback upon form submission."
+  },
+  "motion": {
+    "scroll": "Smooth scrolling (Lenis) is MANDATORY to give the portfolio a premium weight.",
+    "interactions": [
+      "Hover states for all interactive elements.",
+      "Staggered fade-up entrances for bento grid items.",
+      "Subtle parallax on the provided hero background."
+    ],
+    "rules": [
+      "Never use 'transition: all'. Apply specific transitions (e.g., transition: transform 0.3s ease)."
+    ]
+  },
+  "media": {
+    "assets_strategy": "1. Scan directory for provided background and logo files. 2. Implement background in Hero. 3. Implement logo in Header and Footer.",
+    "image_urls": {
+      "project_1": {
+        "url": "https://images.unsplash.com/photo-1496865534669-25ec2a3a0fd3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHwzfHxtaW5pbWFsaXN0JTIwbW9kZXJuJTIwYXJjaGl0ZWN0dXJlfGVufDB8fHx8MTc4NzgyMDQxMXww&ixlib=rb-4.1.0&q=85",
+        "description": "Minimalist white building curve"
+      },
+      "project_2": {
+        "url": "https://images.unsplash.com/photo-1483366774565-c783b9f70e2c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwbW9kZXJuJTIwYXJjaGl0ZWN0dXJlfGVufDB8fHx8MTc4NzgyMDQxMXww&ixlib=rb-4.1.0&q=85",
+        "description": "Worm's-eye view concrete building"
+      },
+      "project_3": {
+        "url": "https://images.unsplash.com/photo-1614595737476-42487331b8a1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHwyfHxtaW5pbWFsaXN0JTIwbW9kZXJuJTIwYXJjaGl0ZWN0dXJlfGVufDB8fHx8MTc4NzgyMDQxMXww&ixlib=rb-4.1.0&q=85",
+        "description": "Gray concrete building"
+      },
+      "project_4": {
+        "url": "https://images.unsplash.com/photo-1738844153732-a485f0e78382?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHw0fHxtaW5pbWFsaXN0JTIwbW9kZXJuJTIwYXJjaGl0ZWN0dXJlfGVufDB8fHx8MTc4NzgyMDQxMXww&ixlib=rb-4.1.0&q=85",
+        "description": "Black and white building detail"
+      }
+    }
+  },
+  "instructions_to_main_agent": [
+    "Create a modern, single-page portfolio.",
+    "First, locate the logo and background from the provided zip/files and integrate them.",
+    "Build the Hero section using the provided background.",
+    "Build the Project Showcase using the provided Unsplash URLs in an asymmetrical grid.",
+    "Build the Demo Contact Form using Shadcn primitives. Ensure the form triggers a Sonner toast on submission.",
+    "Use Lucide React for minimal, crisp iconography.",
+    "Install standard dependencies: framer-motion, lucide-react, clsx, tailwind-merge, sonner."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "CRITICAL: Add 'data-testid' attributes to all buttons, links, form inputs, and key interactive elements.",
+    "CRITICAL: Avoid 'AI slop'. Do not center-align everything. Use tension, asymmetry, and generous spacing.",
+    "CRITICAL: DO NOT use complete transparent backgrounds for the Header. Use glassmorphism.",
+    "CRITICAL: NO generic 'SaaS Blue'. Stick to the luxurious dark monochrome palette.",
+    "CRITICAL: Never use AI emoji characters.",
+    "CRITICAL: Do not use HTML-based components for advanced UI. Use Shadcn + Tailwind.",
+    "CRITICAL: Use pure HTML/Tailwind for the main page structural layout to achieve overlaps, not rigid Shadcn cards."
+  ]
+}

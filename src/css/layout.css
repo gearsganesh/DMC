@@ -1,0 +1,43 @@
+
+
+
+body{background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1000;background:linear-gradient(transparent 50%,rgba(255,255,255,.012) 50%);background-size:100% 4px;opacity:.16}
+.container{width:min(1200px,92%);margin:auto}
+
+
+/* FINAL RHYTHM + ALIGNMENT PASS */
+html{scroll-padding-top:78px}
+section{padding:82px 0}
+.section-head{margin-bottom:38px}
+.hero{min-height:calc(100vh - 78px)}
+.quote{padding:76px 20px}
+.quote p{max-width:900px}
+.contact-grid{align-items:stretch}
+.contact-cards{grid-auto-rows:1fr}
+.contact-card{display:flex;flex-direction:column;justify-content:center;min-height:145px}
+.map-wrap{height:100%;min-height:360px}
+footer{padding:46px 0 24px}
+.footer-grid{align-items:start;gap:42px}
+footer p,footer a{line-height:1.6}
+footer a{margin:7px 0}
+.footer-logo{height:112px}
+.copy{margin-top:34px;padding-top:18px}
+.dmc-future-gallery{margin-top:34px}
+.collection-intro-bar{margin:34px 0 28px}
+.collection-vehicle-grid{gap:16px}
+@media(max-width:900px){
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-grid>div:first-child{grid-column:1/-1}
+}
+@media(max-width:700px){
+  section{padding:68px 0}
+  .quote{padding:58px 18px}
+  .contact-grid{grid-template-columns:1fr}
+  .map-wrap{min-height:300px}
+  footer{padding-top:38px}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-grid>div:first-child{grid-column:auto}
+}
+
+

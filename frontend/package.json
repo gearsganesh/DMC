@@ -1,0 +1,43 @@
+{
+  "name": "dmc-museum",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@craco/craco": "^7.1.0",
+    "@react-three/drei": "^9.96.1",
+    "@react-three/fiber": "^8.15.19",
+    "axios": "^1.6.8",
+    "framer-motion": "^11.0.24",
+    "lenis": "^1.0.42",
+    "lucide-react": "^0.363.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
+    "react-scripts": "5.0.1",
+    "three": "^0.161.0"
+  },
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "typecheck": "tsc --noEmit --allowJs --checkJs false --skipLibCheck"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.7.2"
+  }
+}

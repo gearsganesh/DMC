@@ -1,0 +1,34 @@
+/* DMC FLUID INTERACTION LAYER
+   Inspired by the interaction discipline of BeTheOne,
+   adapted for a normal-scroll automotive archive. */
+
+.dmc-progress{position:fixed;top:0;left:0;width:100%;height:2px;background:rgba(23,22,20,.08);z-index:9999;pointer-events:none}
+.dmc-progress span{display:block;width:100%;height:100%;background:var(--gold-bright);transform-origin:left center;transform:scaleX(0);will-change:transform}
+
+[data-fluid]{will-change:transform,opacity}
+
+.dmc-fluid-ready [data-fluid]{opacity:0;transform:translate3d(0,34px,0)}
+.dmc-fluid-ready [data-fluid].is-visible{opacity:1;transform:translate3d(0,0,0)}
+
+.dmc-fluid-ready .stat.is-visible{transform:translate3d(0,0,0) scale(1)}
+.dmc-fluid-ready .stat{transform:translate3d(0,26px,0) scale(.985)}
+
+[data-fluid-card]{position:relative;overflow:hidden}
+[data-fluid-card] > *{position:relative;z-index:1}
+[data-fluid-card]::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 25%,rgba(164,123,50,.08) 50%,transparent 75%);transform:translateX(-120%);will-change:transform}
+[data-fluid-card].is-visible::after{animation:dmc-sheen 900ms cubic-bezier(.2,.75,.25,1) forwards}
+
+@keyframes dmc-sheen{to{transform:translateX(120%)}}
+
+.fluid-hover{transform:translate3d(var(--mx,0),var(--my,0),0);will-change:transform}
+
+@media (prefers-reduced-motion:reduce){
+  .dmc-progress{display:none}
+  [data-fluid],.dmc-fluid-ready [data-fluid],.dmc-fluid-ready .stat{opacity:1!important;transform:none!important}
+  [data-fluid-card]::after{display:none}
+}
+
+@media(max-width:760px){
+  .dmc-fluid-ready [data-fluid]{transform:translate3d(0,22px,0)}
+  .dmc-progress{height:2px}
+}

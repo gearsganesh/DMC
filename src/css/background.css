@@ -1,0 +1,8 @@
+/* DMC BLACK & GOLD WAVE BACKGROUND */
+html,body{background:#080807!important}
+body{position:relative;isolation:isolate}
+body:before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 18% 20%,rgba(199,168,106,.10),transparent 34%),radial-gradient(circle at 82% 72%,rgba(229,202,145,.07),transparent 38%),#080807;pointer-events:none}
+#dmc-wave-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#080807}
+#dmc-wave-bg canvas{position:absolute!important;inset:0;width:100%!important;height:100%!important;opacity:.68}
+.hero-grid{opacity:.30!important}
+@media(max-width:760px){#dmc-wave-bg canvas{opacity:.55}}
