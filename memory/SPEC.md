@@ -3,6 +3,8 @@
 ## Purpose
 Single-page portfolio/showcase website for Duraimohan Classics (DMC), a private collection of vintage automobiles. The homepage is a cinematic digital archive using the supplied DMC crest and collection photography.
 
+The evolved identity uses a luxury concours-style horizontal winged emblem in the website header and a matching square crest in the footer/social/favicon role. Both retain DMC and Duraimohan Classics while adding “Restoration · Heritage · Preservation”.
+
 ## Editorial structure
 - Hero: "Where Automotive History Lives" and the founder's lifelong journey with machines.
 - Collection philosophy: restoration as active, road-going preservation rather than static display.
@@ -26,4 +28,6 @@ Prototype PIN gate only; no server authentication, backend API, or third-party i
 
 The uploaded `wave-background.js` behavior is integrated through a React effect, including pinned Three.js r134 and Vanta Waves 0.5.24 dynamic loading, full-page `#dmc-wave-bg`, mouse/touch controls, and cleanup. Only the palette is changed to `#0b0b0a`, `#cda968`, and `#e5ca91`.
 
-The site keeps a strong fixed black veil over the animated waves for readable typography. The enlarged header uses a 35% black glass layer so the waves remain visible while the DMC crest stays the dominant brand mark.
+The production palette uses deep charcoal, antique gold, warm ivory, and restrained oxblood accents. A strong fixed black veil keeps typography readable over the animated waves, while the enlarged glass header uses a richer dark treatment so the DMC crest and navigation remain clear.
+
+The repository-root Vercel configuration intentionally builds `frontend/` and publishes `frontend/build`; this prevents the legacy root static site from replacing the current React experience in production. Direct `/admin` navigation is handled by the SPA rewrite.

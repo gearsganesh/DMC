@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node vercel-build.js"
+    "build": "yarn --cwd frontend build",
+    "typecheck": "yarn --cwd frontend typecheck"
   }
 }

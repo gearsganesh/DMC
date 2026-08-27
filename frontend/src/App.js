@@ -143,13 +143,13 @@ function VantaBackdrop() {
           minWidth: 200,
           scale: 1,
           scaleMobile: 1,
-          color: 0xcda968,
-          color2: 0xe5ca91,
+          color: 0xc9a45a,
+          color2: 0xecd397,
           shininess: 28,
           waveHeight: 14,
           waveSpeed: .48,
           zoom: 1.08,
-          backgroundColor: 0x0b0b0a,
+          backgroundColor: 0x090807,
           backgroundAlpha: 1,
         });
         initializedRef.current = true;
@@ -174,7 +174,7 @@ function Header({ menuOpen, setMenuOpen }) {
   return (
     <header className="site-header" data-testid="site-header">
       <a href="#top" className="header-logo" data-testid="header-logo-link" aria-label="DMC home">
-        <img src="/assets/dmc-crest.png" alt="Duraimohan Classics" data-testid="header-logo" />
+        <img src="/assets/dmc-concours-horizontal.png" alt="Duraimohan Classics — Restoration, Heritage, Preservation" data-testid="header-logo" />
       </a>
       <div className="header-status" data-testid="header-status">
         <span className="status-dot" />
@@ -383,7 +383,6 @@ function InquiryForm() {
               <label htmlFor="email">Email address<input id="email" name="email" type="email" placeholder="you@example.com" required data-testid="inquiry-email-input" /></label>
               <label htmlFor="message">Your note<textarea id="message" name="message" rows="4" placeholder="Tell us what brings you here..." required data-testid="inquiry-message-input" /></label>
               <button className="submit-button" type="submit" data-testid="inquiry-submit-button">Send inquiry <ArrowRight size={17} strokeWidth={1.4} /></button>
-              <p className="form-footnote" data-testid="form-footnote">This is a demo inquiry form. No information is stored.</p>
             </form>
           )}
         </div>
@@ -446,7 +445,7 @@ function AdminPanel({ onClose, galleries, onSaveGallery }) {
   return (
     <div className="admin-backdrop" data-testid="admin-panel">
       <motion.aside className="admin-panel" initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}>
-        <div className="admin-panel-top"><div><span className="eyebrow">DMC / Private side</span><h2>Archive admin</h2></div><button type="button" onClick={onClose} aria-label="Close admin panel" data-testid="admin-close-button"><X size={22} strokeWidth={1.3} /></button></div>
+        <div className="admin-panel-top"><div><span className="eyebrow">DMC / Collection office</span><h2>Collection archive</h2></div><button type="button" onClick={onClose} aria-label="Close admin panel" data-testid="admin-close-button"><X size={22} strokeWidth={1.3} /></button></div>
         {!unlocked ? (
           <form className="pin-form" onSubmit={unlock} data-testid="admin-pin-form">
             <p data-testid="admin-pin-instructions">Enter your four-digit PIN to manage the vehicle galleries.</p>
@@ -461,7 +460,6 @@ function AdminPanel({ onClose, galleries, onSaveGallery }) {
             <div className="upload-zone"><input id="car-images" type="file" accept="image/*" multiple onChange={readFiles} data-testid="admin-image-upload-input" /><label htmlFor="car-images" className="upload-label" data-testid="admin-image-upload-label"><ArrowDownRight size={20} /><span><strong>Add vehicle pictures</strong><small>Choose multiple JPG, PNG or WebP files</small></span></label></div>
             {pendingFiles.length > 0 && <div className="pending-files" data-testid="admin-pending-files"><div className="pending-preview-list">{pendingFiles.map((file, index) => <div className="pending-preview" key={`${file.name}-${index}`}><img src={file.src} alt={`Pending upload ${index + 1}`} /><button type="button" onClick={() => setPendingFiles((existing) => existing.filter((_, fileIndex) => fileIndex !== index))} aria-label={`Remove pending upload ${index + 1}`} data-testid={`admin-remove-pending-${index + 1}`}><X size={14} /></button></div>)}</div><div className="pending-actions"><span>{pendingFiles.length} new {pendingFiles.length === 1 ? "picture" : "pictures"} ready</span><button type="button" className="text-link button-link" onClick={saveFiles} data-testid="admin-save-images-button">Save to {selectedCar.name} <Check size={15} /></button></div></div>}
             <div className="admin-gallery" data-testid="admin-current-gallery"><div className="admin-gallery-heading"><span>Saved gallery</span><span>{currentImages.length} images</span></div>{currentImages.map((image, index) => <div className="admin-image-row" key={`${image}-${index}`}><img src={image} alt={`${selectedCar.name} saved view ${index + 1}`} /><span>/{selectedCar.id}/image-{index + 1}</span><button type="button" onClick={() => removeImage(index)} aria-label={`Remove image ${index + 1}`} data-testid={`admin-remove-image-${index + 1}`}><X size={15} /></button></div>)}</div>
-            <p className="admin-note" data-testid="admin-storage-note">Prototype storage: saved in this browser per vehicle directory. Connect a server storage layer when ready for multi-user publishing.</p>
           </div>
         )}
       </motion.aside>
@@ -473,7 +471,7 @@ function Footer() {
   return (
     <footer className="site-footer" data-testid="site-footer">
       <div className="page-shell footer-main">
-        <img src="/assets/dmc-crest.png" alt="Duraimohan Classics" className="footer-logo" data-testid="footer-logo" />
+        <img src="/assets/dmc-concours-square.png" alt="Duraimohan Classics — Restoration, Heritage, Preservation" className="footer-logo" data-testid="footer-logo" />
         <div className="footer-story"><p data-testid="footer-tagline">Not just cars.<br /><em>A piece of history, kept alive.</em></p><p data-testid="footer-description">Duraimohan Classics is a living collection of automobiles and two-wheelers gathered through a lifelong passion for machines. From youthful experimentation and modification to restoration, rescue and preservation, DMC exists to keep these vehicles understood, maintained and moving.<br /><br />Because an old car becomes heritage not when it stops, but when someone cares enough to keep it going.</p></div>
         <div className="footer-links">
           <div><span className="eyebrow">Explore</span><a href="#archive" data-testid="footer-archive-link">Archive</a><a href="#story" data-testid="footer-story-link">The story</a><a href="#inquire" data-testid="footer-inquire-link">Inquire</a></div>

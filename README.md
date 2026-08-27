@@ -1,12 +1,15 @@
-# DMC
+# Duraimohan Classics
 
-Restructured static site for Duraimohan Classics. The visual design and content are preserved while the former monolithic HTML is split into components, CSS, JavaScript modules, and extracted assets.
+The production website lives in `frontend/`. The root Vercel configuration installs and builds that React application, then serves `frontend/build` with an SPA fallback for `/admin`.
 
 ## Development
-Serve the repository root with any static HTTP server. Component loading uses `fetch`, so opening `index.html` directly via `file://` is not supported.
-
-## Build
 ```bash
-npm run build
+yarn --cwd frontend start
 ```
-Vercel publishes the generated `dist/` directory.
+
+## Production build
+```bash
+yarn build
+```
+
+Vercel must use the repository root, the `main` branch, and the checked-in `vercel.json`.

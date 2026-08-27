@@ -1,7 +1,12 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": null,
-  "cleanUrls": true
+  "framework": "create-react-app",
+  "installCommand": "yarn --cwd frontend install --frozen-lockfile",
+  "buildCommand": "yarn --cwd frontend build",
+  "outputDirectory": "frontend/build",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

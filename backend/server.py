@@ -130,16 +130,17 @@ async def seed():
     meta = await db.meta.find_one({"_id": "seed"})
     if meta and meta.get("version") == SEED_VERSION:
         return
-    await db.cars.delete_many({})
-    docs = []
     for i, c in enumerate(SEED_CARS, start=1):
         d = dict(c)
         d["order"] = i
         d["created_at"] = datetime.now(timezone.utc).isoformat()
-        docs.append(d)
-    await db.cars.insert_many(docs)
+        await db.cars.update_one(
+            {"year": d["year"], "make": d["make"]},
+            {"$setOnInsert": d},
+            upsert=True,
+        )
     await db.meta.update_one({"_id": "seed"}, {"$set": {"version": SEED_VERSION}}, upsert=True)
-    logger.info("Seeded %d vehicles (v%d)", len(docs), SEED_VERSION)
+    logger.info("Ensured %d seed vehicles exist without replacing collection data (v%d)", len(SEED_CARS), SEED_VERSION)
 
 
 app.include_router(api)

@@ -1,0 +1,67 @@
+{
+  "iteration": 1,
+  "summary": "All 8 acceptance-matrix criteria verified via named browser checks against the DMC static frontend. No backend API exists by design (seed_facts confirm /api is expected to be unreachable) so no backend pytest suite was written. Two checks (vehicle-gallery-histories-match, w123-sedan-wagon-distinct) failed on first attempt due to incorrect card-index/text assumptions in my own test script; fixed and reran clean on the same iteration (classified as flaky/test-authoring errors, not app bugs).",
+  "passed": 8,
+  "failed": 0,
+  "bugs": [],
+  "action_items": [],
+  "retest_needed": false,
+  "checks": [
+    {
+      "criterion": "Site-wide black overlay keeps typography readable over the uploaded interactive Vanta Waves background",
+      "name": "vanta-background-readable",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "vanta-background element attached; hero, story, inquire headings and footer remained visible after mouse interaction and scroll; screenshots captured for hero/story/inquire/footer."
+    },
+    {
+      "criterion": "DMC logo is prominent and professional in the enlarged glass header",
+      "name": "header-crest-visible-dark",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Header height ~118px, logo bounding box ~218x108px, dark rgba background present before and after scroll (not transparent)."
+    },
+    {
+      "criterion": "User-supplied editorial copy appears in the main public sections",
+      "name": "hero-story-engineering-copy",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "hero-heading contains 'Where Automotive History Lives.'; story-heading contains 'History should not be locked away...kept alive'; engineering-heading contains 'Every classic carries an idea worth remembering'; full supplied paragraphs matched via toContainText."
+    },
+    {
+      "criterion": "All 25 vehicle cards show useful content",
+      "name": "archive-grid-25-cards",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "projects-grid has exactly 25 [data-testid^=project-card-] elements; card 01 and card 25 spot-checked for image, year, title, description visibility."
+    },
+    {
+      "criterion": "Vehicle galleries show the matching full histories",
+      "name": "vehicle-gallery-histories-match",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Card 01 (1924 Chevrolet), card 12 (1964 Fiat 1100 Station Wagon), card 20 (Mercedes-Benz W123 Sedan), card 23 (1967 Jawa) each opened and matched year/title/full description text. Initial run failed due to wrong card index (24 instead of 23 for Jawa) in my own script; fixed and reran passed (flaky/test-authoring, not app bug)."
+    },
+    {
+      "criterion": "Updated W123 identities are distinguishable",
+      "name": "w123-sedan-wagon-distinct",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "project-title-20 = 'Mercedes-Benz W123 — Sedan', project-title-21 = 'Mercedes-Benz W123 — Station Wagon'; opening each shows distinct matching full gallery descriptions. Initial run failed on an incorrect expected substring in my own script; fixed and reran passed."
+    },
+    {
+      "criterion": "Contact and footer contain supplied owner details and narrative",
+      "name": "contact-footer-details-present",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "direct-contact shows 'Duraimohan V', 'Founder', phone '9444009900', email 'Chevy.dm@gmail.com'; footer-description contains 'living collection of automobiles and two-wheelers'; footer-location 'South India'; footer-credit 'Heritage / Passion / Preservation'."
+    },
+    {
+      "criterion": "Public navigation, inquiry, and hidden admin route still work",
+      "name": "nav-inquiry-admin-flow",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "desktop-navigation does not contain 'Admin'; inquiry form submit (tscheck- fixture data) shows form-success-message; /admin loads admin-pin-form; wrong PIN shows admin-pin-error; PIN 2704 unlocks admin-editor."
+    }
+  ]
+}
