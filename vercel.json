@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "framework": "create-react-app",
-  "installCommand": "yarn --cwd frontend install --frozen-lockfile",
-  "buildCommand": "yarn --cwd frontend build",
+  "installCommand": "npm install --prefix frontend",
+  "buildCommand": "npm run build --prefix frontend",
   "outputDirectory": "frontend/build",
   "cleanUrls": true,
   "rewrites": [
