@@ -4,6 +4,7 @@ import "./Admin.css";
 
 function Admin() {
   const [session, setSession] = useState(null);
+  const [authorized, setAuthorized] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [vehicles, setVehicles] = useState([]);
@@ -15,15 +16,18 @@ function Admin() {
 
   useEffect(() => {
     let mounted = true;
+
     supabase.auth.getSession().then(({ data }) => {
       if (mounted) {
         setSession(data.session || null);
         setLoading(false);
       }
     });
+
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession || null);
     });
+
     return () => {
       mounted = false;
       listener.subscription.unsubscribe();
@@ -31,8 +35,20 @@ function Admin() {
   }, []);
 
   useEffect(() => {
-    if (session) loadVehicles();
+    if (!session?.user?.email) {
+      setAuthorized(false);
+      setVehicles([]);
+      setImages([]);
+      setSelectedId("");
+      return;
+    }
+
+    verifyAdmin(session.user.email);
   }, [session]);
+
+  useEffect(() => {
+    if (authorized) loadVehicles();
+  }, [authorized]);
 
   useEffect(() => {
     if (selectedId) loadImages(selectedId);
@@ -44,6 +60,29 @@ function Admin() {
     [vehicles, selectedId]
   );
 
+  async function verifyAdmin(userEmail) {
+    setLoading(true);
+    setMessage("");
+
+    const { data, error } = await supabase
+      .from("admins")
+      .select("email, role")
+      .eq("email", userEmail)
+      .maybeSingle();
+
+    if (error) {
+      setAuthorized(false);
+      setMessage(error.message);
+    } else if (data && String(data.role || "admin").toLowerCase() === "admin") {
+      setAuthorized(true);
+    } else {
+      setAuthorized(false);
+      setMessage("This account is not authorised for the DMC Collection Office.");
+    }
+
+    setLoading(false);
+  }
+
   async function loadVehicles() {
     setLoading(true);
     setMessage("");
@@ -52,8 +91,10 @@ function Admin() {
       .select("id, number, year, make, model, title, sort_order")
       .order("sort_order", { ascending: true })
       .order("year", { ascending: true });
-    if (error) setMessage(error.message);
-    else {
+
+    if (error) {
+      setMessage(error.message);
+    } else {
       setVehicles(data || []);
       if (!selectedId && data?.length) setSelectedId(data[0].id);
     }
@@ -67,6 +108,7 @@ function Admin() {
       .eq("vehicle_id", vehicleId)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
+
     if (error) setMessage(error.message);
     else setImages(data || []);
   }
@@ -75,6 +117,7 @@ function Admin() {
     event.preventDefault();
     setBusy(true);
     setMessage("");
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) setMessage(error.message);
     setBusy(false);
@@ -82,6 +125,7 @@ function Admin() {
 
   async function handleLogout() {
     await supabase.auth.signOut();
+    setAuthorized(false);
     setVehicles([]);
     setImages([]);
     setSelectedId("");
@@ -90,18 +134,27 @@ function Admin() {
   async function handleUpload(event) {
     const files = Array.from(event.target.files || []);
     if (!files.length || !selectedVehicle) return;
+
     setBusy(true);
     setMessage("");
 
     try {
       let nextOrder = images.length;
+
       for (const file of files) {
         if (!file.type.startsWith("image/")) continue;
+
         const extension = (file.name.split(".").pop() || "jpg").toLowerCase();
         const path = `${selectedVehicle.id}/${crypto.randomUUID()}.${extension}`;
+
         const { error: uploadError } = await supabase.storage
           .from("vehicle-images")
-          .upload(path, file, { upsert: false, contentType: file.type, cacheControl: "31536000" });
+          .upload(path, file, {
+            upsert: false,
+            contentType: file.type,
+            cacheControl: "31536000",
+          });
+
         if (uploadError) throw uploadError;
 
         const { data: publicData } = supabase.storage
@@ -115,12 +168,15 @@ function Admin() {
           caption: file.name,
           sort_order: nextOrder,
         });
+
         if (insertError) {
           await supabase.storage.from("vehicle-images").remove([path]);
           throw insertError;
         }
+
         nextOrder += 1;
       }
+
       await loadImages(selectedVehicle.id);
       setMessage("Images uploaded successfully.");
     } catch (error) {
@@ -133,17 +189,26 @@ function Admin() {
 
   async function handleDelete(image) {
     if (!window.confirm("Delete this image permanently?")) return;
+
     setBusy(true);
     setMessage("");
+
     try {
-      const { error: rowError } = await supabase.from("vehicle_images").delete().eq("id", image.id);
+      const { error: rowError } = await supabase
+        .from("vehicle_images")
+        .delete()
+        .eq("id", image.id);
+
       if (rowError) throw rowError;
+
       if (image.storage_path) {
         const { error: storageError } = await supabase.storage
           .from("vehicle-images")
           .remove([image.storage_path]);
+
         if (storageError) throw storageError;
       }
+
       await loadImages(selectedVehicle.id);
       setMessage("Image deleted.");
     } catch (error) {
@@ -164,8 +229,14 @@ function Admin() {
           <div className="admin-kicker">DURAIMOHAN CLASSICS</div>
           <h1>Collection Office</h1>
           <p>Private administration for the DMC archive.</p>
-          <label>Email<input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></label>
-          <label>Password<input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required /></label>
+          <label>
+            Email
+            <input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </label>
+          <label>
+            Password
+            <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          </label>
           {message && <div className="admin-message error">{message}</div>}
           <button type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button>
           <a href="/">Return to archive</a>
@@ -174,29 +245,68 @@ function Admin() {
     );
   }
 
+  if (loading) {
+    return <main className="dmc-admin"><div className="admin-card">Checking Collection Office access…</div></main>;
+  }
+
+  if (!authorized) {
+    return (
+      <main className="dmc-admin">
+        <section className="admin-card admin-login">
+          <div className="admin-kicker">DURAIMOHAN CLASSICS</div>
+          <h1>Access denied</h1>
+          <p>{message || "This account is not authorised for the DMC Collection Office."}</p>
+          <button type="button" onClick={handleLogout}>Sign out</button>
+          <a href="/">Return to archive</a>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="dmc-admin">
       <section className="admin-shell">
         <header className="admin-header">
-          <div><div className="admin-kicker">DURAIMOHAN CLASSICS</div><h1>Collection Office</h1></div>
-          <div className="admin-actions"><a href="/">View archive</a><button type="button" onClick={handleLogout}>Sign out</button></div>
+          <div>
+            <div className="admin-kicker">DURAIMOHAN CLASSICS</div>
+            <h1>Collection Office</h1>
+          </div>
+          <div className="admin-actions">
+            <a href="/">View archive</a>
+            <button type="button" onClick={handleLogout}>Sign out</button>
+          </div>
         </header>
+
         <div className="admin-grid">
           <aside className="admin-card vehicle-list">
             <h2>Collection</h2>
             {loading ? <p>Loading vehicles…</p> : vehicles.map((vehicle) => (
-              <button key={vehicle.id} className={vehicle.id === selectedId ? "vehicle-row active" : "vehicle-row"} onClick={() => setSelectedId(vehicle.id)} type="button">
+              <button
+                key={vehicle.id}
+                className={vehicle.id === selectedId ? "vehicle-row active" : "vehicle-row"}
+                onClick={() => setSelectedId(vehicle.id)}
+                type="button"
+              >
                 <span>{String(vehicle.number || "").padStart(2, "0")}</span>
                 <strong>{vehicle.year} · {vehicle.make}{vehicle.model ? ` ${vehicle.model}` : ""}</strong>
               </button>
             ))}
           </aside>
+
           <section className="admin-card gallery-editor">
             <div className="editor-heading">
-              <div><div className="admin-kicker">SELECTED VEHICLE</div><h2>{selectedVehicle ? `${selectedVehicle.year} · ${selectedVehicle.make}${selectedVehicle.model ? ` ${selectedVehicle.model}` : ""}` : "No vehicle"}</h2></div>
-              <label className="upload-button">{busy ? "Working…" : "Add photographs"}<input type="file" accept="image/*" multiple disabled={busy || !selectedVehicle} onChange={handleUpload} /></label>
+              <div>
+                <div className="admin-kicker">SELECTED VEHICLE</div>
+                <h2>{selectedVehicle ? `${selectedVehicle.year} · ${selectedVehicle.make}${selectedVehicle.model ? ` ${selectedVehicle.model}` : ""}` : "No vehicle"}</h2>
+              </div>
+              <label className="upload-button">
+                {busy ? "Working…" : "Add photographs"}
+                <input type="file" accept="image/*" multiple disabled={busy || !selectedVehicle} onChange={handleUpload} />
+              </label>
             </div>
+
             {message && <div className="admin-message">{message}</div>}
+
             <div className="image-grid">
               {images.map((image) => (
                 <figure key={image.id} className="admin-image">
