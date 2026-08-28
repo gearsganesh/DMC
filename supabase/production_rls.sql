@@ -1,6 +1,6 @@
 -- DMC production RLS repair
--- Run this AFTER the base DMC schema has been created.
--- This replaces the recursive admins policy with a SECURITY DEFINER helper.
+-- Fixes the recursive admins policy that blocks /admin login.
+-- Run this in the DMC Supabase SQL Editor.
 
 create schema if not exists private;
 
@@ -21,10 +21,25 @@ $$;
 revoke all on function private.is_dmc_admin() from public;
 grant execute on function private.is_dmc_admin() to authenticated;
 
+-- Remove the old admins policies first. Any policy that queries admins
+-- from the admins table itself can cause PostgreSQL infinite recursion.
+do $$
+declare
+  p record;
+begin
+  for p in
+    select policyname
+    from pg_policies
+    where schemaname = 'public'
+      and tablename = 'admins'
+  loop
+    execute format('drop policy if exists %I on public.admins', p.policyname);
+  end loop;
+end $$;
+
 drop policy if exists "Admins can manage vehicles" on public.vehicles;
 drop policy if exists "Admins can manage vehicle images" on public.vehicle_images;
 drop policy if exists "Admins can read enquiries" on public.enquiries;
-drop policy if exists "Admins can read admins" on public.admins;
 
 drop policy if exists "DMC admin upload vehicle images" on storage.objects;
 drop policy if exists "DMC admin update vehicle images" on storage.objects;
@@ -50,11 +65,13 @@ for select
 to authenticated
 using (private.is_dmc_admin());
 
-create policy "Admins can read admins"
+-- Safe admin lookup: a signed-in user can read only their own admin row.
+-- This policy does NOT query the admins table and therefore cannot recurse.
+create policy "Admins can read own admin record"
 on public.admins
 for select
 to authenticated
-using (private.is_dmc_admin());
+using (lower(email) = lower(auth.jwt() ->> 'email'));
 
 create policy "DMC admin upload vehicle images"
 on storage.objects
