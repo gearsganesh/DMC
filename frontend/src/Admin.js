@@ -64,10 +64,12 @@ function Admin() {
     setLoading(true);
     setMessage("");
 
+    // Email matching is intentionally case-insensitive to mirror the RLS
+    // policy. Auth providers may preserve the casing entered at signup.
     const { data, error } = await supabase
       .from("admins")
       .select("email, role")
-      .eq("email", userEmail)
+      .ilike("email", userEmail)
       .maybeSingle();
 
     if (error) {
